@@ -37,7 +37,7 @@ from pipeline.prompts import extraction, grant_type_fallback, relevance, synopsi
 logger = logging.getLogger(__name__)
 
 # Gemini model ID
-_MODEL_ID = "gemini-2.5-flash"
+_MODEL_ID = "gemini-2.5-flash-lite"
 
 
 def _get_client() -> genai.Client:

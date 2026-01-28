@@ -159,7 +159,7 @@ app_ui = ui.page_navbar(
                 ui.tags.ul(
                     ui.tags.li(
                         "Pipeline: Python, httpx, feedparser, BeautifulSoup, "
-                        "Gemini 2.5 Flash"
+                        "Gemini 2.5 Flash-Lite"
                     ),
                     ui.tags.li(
                         "Dashboard: Shiny for Python on Posit Connect Cloud"

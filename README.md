@@ -55,7 +55,7 @@ pytest tests/ -v
 ## Configuration
 
 Copy `.env.example` to `.env` and set:
-- `GEMINI_API_KEY` -- Gemini 2.5 Flash for enrichment
+- `GEMINI_API_KEY` -- Gemini 2.5 Flash-Lite for enrichment
 - `RESEND_API_KEY` -- email digest delivery
 - `NOTIFICATION_EMAIL` -- recipient address
 
@@ -72,7 +72,7 @@ The pipeline will scrape the page, extract grant information, and enrich it with
 
 ## Technology
 
-- Python, httpx, feedparser, BeautifulSoup, Gemini 2.5 Flash
+- Python, httpx, feedparser, BeautifulSoup, Gemini 2.5 Flash-Lite
 - Shiny for Python on Posit Connect Cloud
 - SQLite (committed to git)
 - GitHub Actions (crawl every 6 hours)
