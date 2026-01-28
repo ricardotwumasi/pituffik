@@ -106,6 +106,14 @@ app_ui = ui.page_navbar(
         ui.card(
             ui.card_header("About Pituffik"),
             ui.card_body(
+                ui.tags.img(
+                    src="pituffik_hero.png",
+                    alt="Pituffik -- a radar dish in an arctic landscape scanning for grant opportunities",
+                    style=(
+                        "width:100%;max-width:700px;display:block;"
+                        "margin:0 auto 24px auto;border-radius:8px;"
+                    ),
+                ),
                 ui.h3("Pituffik -- Health Research Grant Discovery"),
                 ui.p(
                     "Pituffik is an automated grant discovery system for health "
