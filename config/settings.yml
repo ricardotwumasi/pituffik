@@ -27,7 +27,7 @@ deduplication:
     - gclid
 
 gemini:
-  model: "gemini-1.5-flash"
+  model: "gemini-2.5-flash"
   # Temperature for classification tasks
   classification_temperature: 0.1
   # Temperature for synopsis generation

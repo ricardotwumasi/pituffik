@@ -1,4 +1,4 @@
-"""Gemini 1.5 Flash enrichment engine for Pituffik.
+"""Gemini enrichment engine for Pituffik.
 
 Handles all Gemini API interactions for grant opportunities:
 - Relevance classification against target health research profile
@@ -37,7 +37,7 @@ from pipeline.prompts import extraction, grant_type_fallback, relevance, synopsi
 logger = logging.getLogger(__name__)
 
 # Gemini model ID
-_MODEL_ID = "gemini-1.5-flash"
+_MODEL_ID = "gemini-2.5-flash"
 
 
 def _get_client() -> genai.Client:
