@@ -216,12 +216,12 @@
                     {% if opp.amount_min and opp.amount_max %} &ndash; {% endif %}
                     {% if opp.amount_max %}{{ '{:,.0f}'.format(opp.amount_max) }}{% endif %}
                 </span>
-                {% if opp.amount_usd_min or opp.amount_usd_max %}
+                {% if opp.amount_gbp_min or opp.amount_gbp_max %}
                     <span style="color:#78716c;font-size:12px;">
-                        (USD
-                        {% if opp.amount_usd_min %}{{ '{:,.0f}'.format(opp.amount_usd_min) }}{% endif %}
-                        {% if opp.amount_usd_min and opp.amount_usd_max %} &ndash; {% endif %}
-                        {% if opp.amount_usd_max %}{{ '{:,.0f}'.format(opp.amount_usd_max) }}{% endif %})
+                        (GBP
+                        {% if opp.amount_gbp_min %}{{ '{:,.0f}'.format(opp.amount_gbp_min) }}{% endif %}
+                        {% if opp.amount_gbp_min and opp.amount_gbp_max %} &ndash; {% endif %}
+                        {% if opp.amount_gbp_max %}{{ '{:,.0f}'.format(opp.amount_gbp_max) }}{% endif %})
                     </span>
                 {% endif %}
             </div>

@@ -47,7 +47,7 @@ pipeline/                  # Pipeline modules
   verifier.py             # Fetch authoritative pages, extract deadlines
   enricher.py             # Gemini API calls
   notifier.py             # Resend weekly email digest
-  fx.py                   # ECB currency conversion to USD
+  fx.py                   # ECB currency conversion to GBP
 .github/workflows/crawl.yml
 ```
 

@@ -2,7 +2,7 @@
 
 import pytest
 
-from pipeline.fx import convert_to_usd, parse_ecb_xml
+from pipeline.fx import convert_to_gbp, parse_ecb_xml
 
 
 # Sample ECB XML for testing
@@ -44,36 +44,36 @@ class TestParseEcbXml:
             parse_ecb_xml("")
 
 
-class TestConvertToUsd:
-    """Tests for currency conversion to USD."""
+class TestConvertToGbp:
+    """Tests for currency conversion to GBP."""
 
-    def test_gbp_to_usd(self):
+    def test_usd_to_gbp(self):
         rates = {
             "GBP": {"rate_to_eur": 0.8456, "date": "2025-01-28"},
             "USD": {"rate_to_eur": 1.0825, "date": "2025-01-28"},
         }
-        result = convert_to_usd(100000.0, "GBP", rates)
+        result = convert_to_gbp(100000.0, "USD", rates)
         assert result is not None
-        # 100000 GBP * (1.0825 / 0.8456) = ~127,990 USD
-        assert 120000 < result < 140000
+        # 100000 USD / 1.0825 * 0.8456 = ~78,120 GBP
+        assert 70000 < result < 90000
 
-    def test_eur_to_usd(self):
-        rates = {"USD": {"rate_to_eur": 1.0825, "date": "2025-01-28"}}
-        result = convert_to_usd(100000.0, "EUR", rates)
+    def test_eur_to_gbp(self):
+        rates = {"GBP": {"rate_to_eur": 0.8456, "date": "2025-01-28"}}
+        result = convert_to_gbp(100000.0, "EUR", rates)
         assert result is not None
-        assert abs(result - 108250.0) < 1.0
+        assert abs(result - 84560.0) < 1.0
 
-    def test_usd_to_usd(self):
-        rates = {"USD": {"rate_to_eur": 1.0825, "date": "2025-01-28"}}
-        result = convert_to_usd(100000.0, "USD", rates)
+    def test_gbp_to_gbp(self):
+        rates = {"GBP": {"rate_to_eur": 0.8456, "date": "2025-01-28"}}
+        result = convert_to_gbp(100000.0, "GBP", rates)
         assert result == 100000.0
 
     def test_unknown_currency(self):
-        rates = {"USD": {"rate_to_eur": 1.0825, "date": "2025-01-28"}}
-        result = convert_to_usd(100000.0, "XYZ", rates)
+        rates = {"GBP": {"rate_to_eur": 0.8456, "date": "2025-01-28"}}
+        result = convert_to_gbp(100000.0, "XYZ", rates)
         assert result is None
 
     def test_none_amount(self):
-        rates = {"USD": {"rate_to_eur": 1.0825, "date": "2025-01-28"}}
-        result = convert_to_usd(None, "GBP", rates)
+        rates = {"GBP": {"rate_to_eur": 0.8456, "date": "2025-01-28"}}
+        result = convert_to_gbp(None, "USD", rates)
         assert result is None

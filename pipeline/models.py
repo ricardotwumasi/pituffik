@@ -160,8 +160,8 @@ class Opportunity(BaseModel):
     amount_min: Optional[float] = None
     amount_max: Optional[float] = None
     amount_currency: Optional[str] = None
-    amount_usd_min: Optional[float] = None
-    amount_usd_max: Optional[float] = None
+    amount_gbp_min: Optional[float] = None
+    amount_gbp_max: Optional[float] = None
     amount_confidence: str = "unknown"
     duration_months: Optional[int] = None
     host_institution_required: Optional[bool] = None
@@ -225,4 +225,4 @@ class FxRate(BaseModel):
     rate_date: str
     currency: str
     rate_to_eur: float
-    rate_to_usd: Optional[float] = None
+    rate_to_gbp: Optional[float] = None

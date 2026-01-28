@@ -51,7 +51,7 @@ def run_pipeline(dry_run: bool = False) -> dict:
     3. Insert/update opportunities in the database
     4. Verify opportunities (fetch authoritative pages, check status)
     5. Enrich opportunities via Gemini (relevance, extraction, synopsis)
-    6. Update FX rates and convert amounts to USD
+    6. Update FX rates and convert amounts to GBP
     7. Send weekly email digest of new relevant opportunities
 
     Args:
@@ -211,12 +211,12 @@ def run_pipeline(dry_run: bool = False) -> dict:
         try:
             fx_rates = update_fx_rates(conn, http_client)
             if fx_rates:
-                # Convert amounts for all opportunities with amounts but no USD conversion
+                # Convert amounts for all opportunities with amounts but no GBP conversion
                 rows = conn.execute(
                     """SELECT opportunity_id FROM opportunities
                     WHERE amount_min IS NOT NULL
                       AND amount_currency IS NOT NULL
-                      AND amount_usd_min IS NULL"""
+                      AND amount_gbp_min IS NULL"""
                 ).fetchall()
                 for row in rows:
                     try:

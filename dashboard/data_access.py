@@ -48,7 +48,7 @@ def get_filtered_opportunities(
     status: Optional[str] = None,
     search_text: Optional[str] = None,
     min_relevance: Optional[float] = None,
-    min_amount_usd: Optional[float] = None,
+    min_amount_gbp: Optional[float] = None,
 ) -> list[dict]:
     """Fetch opportunities with optional filters.
 
@@ -61,7 +61,7 @@ def get_filtered_opportunities(
         status: Status filter ("open", "closed", "unverified").
         search_text: Free-text search across title, funder, scheme, eligibility.
         min_relevance: Minimum relevance score (0-1).
-        min_amount_usd: Minimum USD amount (uses amount_usd_max).
+        min_amount_gbp: Minimum GBP amount (uses amount_gbp_max).
 
     Returns:
         A list of opportunity dicts matching the filters.
@@ -103,11 +103,11 @@ def get_filtered_opportunities(
         conditions.append("relevance_score >= ?")
         params.append(min_relevance)
 
-    if min_amount_usd is not None:
+    if min_amount_gbp is not None:
         conditions.append(
-            "(amount_usd_max >= ? OR amount_usd_min >= ?)"
+            "(amount_gbp_max >= ? OR amount_gbp_min >= ?)"
         )
-        params.extend([min_amount_usd, min_amount_usd])
+        params.extend([min_amount_gbp, min_amount_gbp])
 
     where_clause = " AND ".join(conditions) if conditions else "1=1"
 

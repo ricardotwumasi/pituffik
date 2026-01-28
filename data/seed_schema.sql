@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS opportunities (
     amount_min              REAL,
     amount_max              REAL,
     amount_currency         TEXT,                          -- ISO 4217 code
-    amount_usd_min          REAL,                          -- converted via ECB rates
-    amount_usd_max          REAL,
+    amount_gbp_min          REAL,                          -- converted via ECB rates
+    amount_gbp_max          REAL,
     amount_confidence       TEXT DEFAULT 'unknown',        -- high, medium, low, unknown
     duration_months         INTEGER,
     host_institution_required INTEGER,                     -- boolean
@@ -51,7 +51,7 @@ CREATE INDEX IF NOT EXISTS idx_opp_grant_type ON opportunities(grant_type_bucket
 CREATE INDEX IF NOT EXISTS idx_opp_status ON opportunities(status);
 CREATE INDEX IF NOT EXISTS idx_opp_first_seen ON opportunities(first_seen_at);
 CREATE INDEX IF NOT EXISTS idx_opp_funder ON opportunities(funder_name);
-CREATE INDEX IF NOT EXISTS idx_opp_amount_usd ON opportunities(amount_usd_min);
+CREATE INDEX IF NOT EXISTS idx_opp_amount_gbp ON opportunities(amount_gbp_min);
 
 -- Raw HTML/text snapshots per crawl (for change detection)
 CREATE TABLE IF NOT EXISTS opportunity_snapshots (
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS fx_rates (
     rate_date               TEXT NOT NULL,                 -- ISO 8601 date
     currency                TEXT NOT NULL,                 -- ISO 4217 code
     rate_to_eur             REAL NOT NULL,                 -- 1 EUR = X units of currency
-    rate_to_usd             REAL,                          -- 1 USD = X units of currency
+    rate_to_gbp             REAL,                          -- 1 unit of currency = X GBP
     fetched_at              TEXT NOT NULL DEFAULT (datetime('now')),
     PRIMARY KEY (rate_date, currency)
 );

@@ -34,7 +34,7 @@ User-editable `config/seed_urls.yml` -- add any funder URL, no code needed. Pre-
 
 ## Thematic Scope
 
-Psychology, psychiatry, mental health, health psychology, behavioural science, occupational psychology, implementation science, health services research, and adjacent areas. Prioritises opportunities >USD 100,000.
+Psychology, psychiatry, mental health, health psychology, behavioural science, occupational psychology, implementation science, health services research, and adjacent areas. Prioritises opportunities >GBP 70,000.
 
 ## Quick Start
 

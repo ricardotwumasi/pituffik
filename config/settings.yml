@@ -5,8 +5,8 @@ pipeline:
   gemini_call_cap: 200
   # Minimum relevance score to include in email digest
   relevance_threshold: 0.65
-  # Minimum USD amount for primary display (opportunities below this are deprioritised)
-  min_usd_amount: 100000
+  # Minimum GBP amount for primary display (opportunities below this are deprioritised)
+  min_gbp_amount: 70000
   # Number of days before an opportunity is considered expired
   expiry_days: 180
   # User agent string for HTTP requests
@@ -52,5 +52,5 @@ database:
 fx:
   # ECB daily exchange rate XML feed
   ecb_url: "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
-  # Fallback USD/EUR rate if ECB feed is unavailable
-  fallback_usd_eur: 1.08
+  # Fallback GBP/EUR rate if ECB feed is unavailable
+  fallback_gbp_eur: 0.845

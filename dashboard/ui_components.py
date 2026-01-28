@@ -413,9 +413,9 @@ def deadline_urgency_badge(deadline_date: Optional[str]) -> Optional[ui.Tag]:
 
 
 def amount_display(opp: dict) -> Optional[ui.Tag]:
-    """Render the funding amount with currency and USD conversion.
+    """Render the funding amount with currency and GBP conversion.
 
-    Shows the original currency range and, where available, a USD
+    Shows the original currency range and, where available, a GBP
     equivalent.  Uses a gold accent when the amount confidence is high.
 
     Args:
@@ -428,8 +428,8 @@ def amount_display(opp: dict) -> Optional[ui.Tag]:
     amount_max = opp.get("amount_max")
     currency = opp.get("amount_currency", "")
     confidence = opp.get("amount_confidence", "unknown")
-    usd_min = opp.get("amount_usd_min")
-    usd_max = opp.get("amount_usd_max")
+    gbp_min = opp.get("amount_gbp_min")
+    gbp_max = opp.get("amount_gbp_max")
 
     if amount_min is None and amount_max is None:
         return None
@@ -449,17 +449,18 @@ def amount_display(opp: dict) -> Optional[ui.Tag]:
     if confidence == "high":
         css_class += " high-confidence"
 
-    # Build USD conversion string
-    usd_parts = []
-    if usd_min is not None:
-        usd_parts.append(f"USD {usd_min:,.0f}")
-    if usd_max is not None:
-        usd_parts.append(f"USD {usd_max:,.0f}")
-    usd_str = " -- ".join(usd_parts) if usd_parts else None
+    # Build GBP conversion string (only if original currency is not GBP)
+    gbp_parts = []
+    if currency.upper() != "GBP":
+        if gbp_min is not None:
+            gbp_parts.append(f"GBP {gbp_min:,.0f}")
+        if gbp_max is not None:
+            gbp_parts.append(f"GBP {gbp_max:,.0f}")
+    gbp_str = " -- ".join(gbp_parts) if gbp_parts else None
 
     children = [ui.span(amount_str)]
-    if usd_str:
-        children.append(ui.span(f" ({usd_str})", class_="amount-usd"))
+    if gbp_str:
+        children.append(ui.span(f" ({gbp_str})", class_="amount-gbp"))
     if confidence == "high":
         children.append(
             ui.span(" [high confidence]", class_="confidence-indicator")

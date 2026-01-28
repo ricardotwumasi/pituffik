@@ -67,7 +67,7 @@ app_ui = ui.page_navbar(
                     min=0, max=100, value=0, step=5, post="%",
                 ),
                 ui.input_numeric(
-                    "min_amount_usd", "Min. amount (USD)",
+                    "min_amount_gbp", "Min. amount (GBP)",
                     value=None, min=0, step=10000,
                 ),
                 ui.hr(),
@@ -113,7 +113,7 @@ app_ui = ui.page_navbar(
                     "funder websites and grant databases every six hours, "
                     "deduplicates and verifies listings, enriches them with "
                     "AI-powered relevance scoring and structured field extraction, "
-                    "converts amounts to USD via ECB exchange rates, and delivers "
+                    "converts amounts to GBP via ECB exchange rates, and delivers "
                     "weekly email digests of the most relevant opportunities."
                 ),
                 ui.h4("Thematic scope"),
@@ -219,7 +219,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     def filtered_opportunities():
         conn = db_conn()
         min_rel = input.min_relevance() / 100.0 if input.min_relevance() > 0 else None
-        min_amt = input.min_amount_usd() if input.min_amount_usd() else None
+        min_amt = input.min_amount_gbp() if input.min_amount_gbp() else None
         return get_filtered_opportunities(
             conn,
             funder=input.funder() if input.funder() else None,
@@ -229,7 +229,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             status=input.status(),
             search_text=input.search_text() if input.search_text() else None,
             min_relevance=min_rel,
-            min_amount_usd=min_amt,
+            min_amount_gbp=min_amt,
         )
 
     # Opportunities table
@@ -254,8 +254,8 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             if opp.get("amount_max") is not None:
                 currency = opp.get("amount_currency", "")
                 amount_str = f"{currency} {opp['amount_max']:,.0f}".strip()
-            elif opp.get("amount_usd_max") is not None:
-                amount_str = f"USD {opp['amount_usd_max']:,.0f}"
+            elif opp.get("amount_gbp_max") is not None:
+                amount_str = f"GBP {opp['amount_gbp_max']:,.0f}"
 
             rows.append({
                 "opportunity_id": opp["opportunity_id"],

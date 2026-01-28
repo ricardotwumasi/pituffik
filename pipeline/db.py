@@ -77,8 +77,8 @@ def upsert_opportunity(conn: sqlite3.Connection, opp: Opportunity) -> bool:
                 amount_min = COALESCE(?, amount_min),
                 amount_max = COALESCE(?, amount_max),
                 amount_currency = COALESCE(?, amount_currency),
-                amount_usd_min = COALESCE(?, amount_usd_min),
-                amount_usd_max = COALESCE(?, amount_usd_max),
+                amount_gbp_min = COALESCE(?, amount_gbp_min),
+                amount_gbp_max = COALESCE(?, amount_gbp_max),
                 amount_confidence = COALESCE(?, amount_confidence),
                 duration_months = COALESCE(?, duration_months),
                 host_institution_required = COALESCE(?, host_institution_required),
@@ -108,8 +108,8 @@ def upsert_opportunity(conn: sqlite3.Connection, opp: Opportunity) -> bool:
                 opp.amount_min,
                 opp.amount_max,
                 opp.amount_currency,
-                opp.amount_usd_min,
-                opp.amount_usd_max,
+                opp.amount_gbp_min,
+                opp.amount_gbp_max,
                 opp.amount_confidence,
                 opp.duration_months,
                 int(opp.host_institution_required) if opp.host_institution_required is not None else None,
@@ -133,7 +133,7 @@ def upsert_opportunity(conn: sqlite3.Connection, opp: Opportunity) -> bool:
                 language, deadline_date, deadline_type, open_date,
                 status, summary_en, topics, eligibility, career_stage,
                 amount_min, amount_max, amount_currency,
-                amount_usd_min, amount_usd_max, amount_confidence,
+                amount_gbp_min, amount_gbp_max, amount_confidence,
                 duration_months, host_institution_required,
                 grant_type_bucket, grant_type_source,
                 relevance_score, health_research_match, relevance_rationale,
@@ -171,8 +171,8 @@ def upsert_opportunity(conn: sqlite3.Connection, opp: Opportunity) -> bool:
                 opp.amount_min,
                 opp.amount_max,
                 opp.amount_currency,
-                opp.amount_usd_min,
-                opp.amount_usd_max,
+                opp.amount_gbp_min,
+                opp.amount_gbp_max,
                 opp.amount_confidence,
                 opp.duration_months,
                 int(opp.host_institution_required) if opp.host_institution_required is not None else None,
@@ -347,9 +347,9 @@ def insert_enrichment(conn: sqlite3.Connection, enrichment: Enrichment) -> int:
 def upsert_fx_rate(conn: sqlite3.Connection, rate: FxRate) -> None:
     """Insert or update an FX rate."""
     conn.execute(
-        """INSERT OR REPLACE INTO fx_rates (rate_date, currency, rate_to_eur, rate_to_usd)
+        """INSERT OR REPLACE INTO fx_rates (rate_date, currency, rate_to_eur, rate_to_gbp)
         VALUES (?, ?, ?, ?)""",
-        (rate.rate_date, rate.currency, rate.rate_to_eur, rate.rate_to_usd),
+        (rate.rate_date, rate.currency, rate.rate_to_eur, rate.rate_to_gbp),
     )
     conn.commit()
 

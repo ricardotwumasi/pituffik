@@ -1,13 +1,13 @@
 """ECB currency conversion module for Pituffik.
 
 Fetches daily exchange rates from the European Central Bank (ECB) and
-converts grant amounts to USD via EUR cross-rates. Rates are cached in
+converts grant amounts to GBP via EUR cross-rates. Rates are cached in
 the database to minimise external requests.
 
 Conversion path:
-- USD amounts: passthrough (no conversion needed)
-- EUR amounts: convert directly using the EUR/USD rate
-- All other currencies: convert to EUR first, then to USD
+- GBP amounts: passthrough (no conversion needed)
+- EUR amounts: convert directly using the EUR/GBP rate
+- All other currencies: convert to EUR first, then to GBP
 """
 
 from __future__ import annotations
@@ -126,27 +126,27 @@ def fetch_ecb_rates(http_client) -> dict:
     return parse_ecb_xml(response.text)
 
 
-def convert_to_usd(
+def convert_to_gbp(
     amount: Optional[float],
     currency: str,
     rates: dict,
 ) -> Optional[float]:
-    """Convert an amount in any currency to USD via EUR cross-rate.
+    """Convert an amount in any currency to GBP via EUR cross-rate.
 
     Conversion logic:
     - If amount is None, return None.
-    - If currency is USD, return the amount unchanged (passthrough).
-    - If currency is EUR, convert directly: amount * EUR/USD rate.
+    - If currency is GBP, return the amount unchanged (passthrough).
+    - If currency is EUR, convert directly: amount * EUR/GBP rate.
     - For all other currencies, convert to EUR first (amount / rate_to_eur),
-      then from EUR to USD.
+      then from EUR to GBP.
 
     Args:
         amount: The monetary amount to convert, or None.
-        currency: The ISO 4217 three-letter currency code (e.g. "GBP", "DKK").
+        currency: The ISO 4217 three-letter currency code (e.g. "USD", "DKK").
         rates: The rates dictionary from parse_ecb_xml or fetch_ecb_rates.
 
     Returns:
-        The amount in USD (rounded to 2 decimal places), or None if the
+        The amount in GBP (rounded to 2 decimal places), or None if the
         currency is not found in the rates dictionary or the amount is None.
     """
     if amount is None:
@@ -154,23 +154,23 @@ def convert_to_usd(
 
     currency_upper = currency.upper()
 
-    # USD passthrough
-    if currency_upper == "USD":
+    # GBP passthrough
+    if currency_upper == "GBP":
         return round(amount, 2)
 
-    # We need the EUR/USD rate for any conversion
-    usd_entry = rates.get("USD")
-    if not usd_entry:
-        logger.warning("USD rate not found in rates dictionary")
+    # We need the EUR/GBP rate for any conversion
+    gbp_entry = rates.get("GBP")
+    if not gbp_entry:
+        logger.warning("GBP rate not found in rates dictionary")
         return None
 
-    eur_to_usd = usd_entry["rate_to_eur"]  # This is 1 EUR = X USD
+    eur_to_gbp = gbp_entry["rate_to_eur"]  # This is 1 EUR = X GBP
 
     # EUR direct conversion
     if currency_upper == "EUR":
-        return round(amount * eur_to_usd, 2)
+        return round(amount * eur_to_gbp, 2)
 
-    # Other currencies: convert to EUR first, then to USD
+    # Other currencies: convert to EUR first, then to GBP
     source_entry = rates.get(currency_upper)
     if not source_entry:
         logger.warning("Currency %s not found in ECB rates", currency_upper)
@@ -178,14 +178,14 @@ def convert_to_usd(
 
     source_to_eur = source_entry["rate_to_eur"]  # 1 EUR = X source_currency
     amount_in_eur = amount / source_to_eur
-    amount_in_usd = amount_in_eur * eur_to_usd
-    return round(amount_in_usd, 2)
+    amount_in_gbp = amount_in_eur * eur_to_gbp
+    return round(amount_in_gbp, 2)
 
 
 def update_fx_rates(conn: sqlite3.Connection, http_client) -> dict:
     """Fetch ECB rates and store them in the database.
 
-    Fetches the latest daily rates from the ECB, computes the USD cross-rate
+    Fetches the latest daily rates from the ECB, computes the GBP cross-rate
     for each currency, and upserts them into the fx_rates table.
 
     Args:
@@ -197,31 +197,31 @@ def update_fx_rates(conn: sqlite3.Connection, http_client) -> dict:
     """
     rates = fetch_ecb_rates(http_client)
 
-    # Compute USD cross-rates and store each currency
-    usd_rate = rates.get("USD", {}).get("rate_to_eur")
+    # Compute GBP cross-rates and store each currency
+    gbp_rate = rates.get("GBP", {}).get("rate_to_eur")
 
     for currency_code, rate_info in rates.items():
         rate_to_eur = rate_info["rate_to_eur"]
         rate_date = rate_info["date"]
 
-        # Compute rate_to_usd: how many USD per 1 unit of this currency
+        # Compute rate_to_gbp: how many GBP per 1 unit of this currency
         # 1 unit of currency = (1 / rate_to_eur) EUR
-        # 1 EUR = usd_rate USD
-        # So 1 unit of currency = (usd_rate / rate_to_eur) USD
-        rate_to_usd = None
-        if usd_rate is not None and rate_to_eur > 0:
-            if currency_code == "USD":
-                rate_to_usd = 1.0
+        # 1 EUR = gbp_rate GBP
+        # So 1 unit of currency = (gbp_rate / rate_to_eur) GBP
+        rate_to_gbp = None
+        if gbp_rate is not None and rate_to_eur > 0:
+            if currency_code == "GBP":
+                rate_to_gbp = 1.0
             elif currency_code == "EUR":
-                rate_to_usd = usd_rate
+                rate_to_gbp = gbp_rate
             else:
-                rate_to_usd = round(usd_rate / rate_to_eur, 6)
+                rate_to_gbp = round(gbp_rate / rate_to_eur, 6)
 
         fx_rate = FxRate(
             rate_date=rate_date,
             currency=currency_code,
             rate_to_eur=rate_to_eur,
-            rate_to_usd=rate_to_usd,
+            rate_to_gbp=rate_to_gbp,
         )
         db.upsert_fx_rate(conn, fx_rate)
 
@@ -234,7 +234,7 @@ def convert_opportunity_amounts(
     opp_id: str,
     rates: dict,
 ) -> dict:
-    """Convert an opportunity's amount_min and amount_max to USD.
+    """Convert an opportunity's amount_min and amount_max to GBP.
 
     Reads the opportunity record from the database, converts its amounts
     using the provided rates, and returns a dict of field updates (but does
@@ -246,8 +246,8 @@ def convert_opportunity_amounts(
         rates: The rates dictionary from the ECB feed.
 
     Returns:
-        A dict of field updates. May contain "amount_usd_min" and/or
-        "amount_usd_max" keys. Returns an empty dict if no conversion
+        A dict of field updates. May contain "amount_gbp_min" and/or
+        "amount_gbp_max" keys. Returns an empty dict if no conversion
         is possible (e.g. missing currency or amount data).
     """
     opp = db.get_opportunity(conn, opp_id)
@@ -261,19 +261,19 @@ def convert_opportunity_amounts(
 
     updates: dict = {}
 
-    usd_min = convert_to_usd(opp.amount_min, opp.amount_currency, rates)
-    if usd_min is not None:
-        updates["amount_usd_min"] = usd_min
+    gbp_min = convert_to_gbp(opp.amount_min, opp.amount_currency, rates)
+    if gbp_min is not None:
+        updates["amount_gbp_min"] = gbp_min
 
-    usd_max = convert_to_usd(opp.amount_max, opp.amount_currency, rates)
-    if usd_max is not None:
-        updates["amount_usd_max"] = usd_max
+    gbp_max = convert_to_gbp(opp.amount_max, opp.amount_currency, rates)
+    if gbp_max is not None:
+        updates["amount_gbp_max"] = gbp_max
 
     if updates:
         logger.debug(
             "FX conversion for %s (%s): min=%s, max=%s",
             opp_id, opp.amount_currency,
-            updates.get("amount_usd_min"), updates.get("amount_usd_max"),
+            updates.get("amount_gbp_min"), updates.get("amount_gbp_max"),
         )
 
     return updates

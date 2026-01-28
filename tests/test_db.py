@@ -144,7 +144,7 @@ class TestFxRates:
             rate_date="2025-01-28",
             currency="GBP",
             rate_to_eur=0.8456,
-            rate_to_usd=1.0825,
+            rate_to_gbp=1.0,
         )
         db.upsert_fx_rate(test_db, rate)
         result = db.get_fx_rate(test_db, "GBP", "2025-01-28")
