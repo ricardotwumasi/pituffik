@@ -107,7 +107,7 @@ app_ui = ui.page_navbar(
             ui.card_header("About Pituffik"),
             ui.card_body(
                 ui.tags.img(
-                    src="pituffik_hero.png",
+                    src="https://raw.githubusercontent.com/ricardotwumasi/pituffik/main/www/pituffik_hero.jpg",
                     alt="Pituffik -- a radar dish in an arctic landscape scanning for grant opportunities",
                     style=(
                         "width:100%;max-width:700px;display:block;"
