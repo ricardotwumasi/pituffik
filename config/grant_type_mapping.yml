@@ -1,0 +1,99 @@
+# Pituffik grant type mapping configuration
+# Maps grant titles/descriptions to standardised type buckets using regex patterns.
+# Patterns are case-insensitive, tested in order (first match wins).
+# Gemini fallback is used when no pattern matches.
+
+grant_type_buckets:
+  fellowship:
+    label: "Fellowship"
+    target: true
+    patterns:
+      - "\\bfellowship\\b"
+      - "\\binvestigator\\s+award\\b"
+      - "\\bcareer\\s+development\\s+award\\b"
+      - "\\bcareer\\s+award\\b"
+      - "\\bearly\\s+career\\s+award\\b"
+      - "\\bpersonal\\s+award\\b"
+      - "\\bsenior\\s+investigator\\b"
+      - "\\bK\\d{2}\\b"
+      - "\\bEMBO\\b.*\\bfellowship\\b"
+
+  project:
+    label: "Project Grant"
+    target: true
+    patterns:
+      - "\\bproject\\s+grant\\b"
+      - "\\bresearch\\s+grant\\b"
+      - "\\bR01\\b"
+      - "\\bR21\\b"
+      - "\\bR03\\b"
+      - "\\bR34\\b"
+      - "\\bresponsive\\s+mode\\b"
+      - "\\bstandard\\s+research\\s+grant\\b"
+      - "\\bnew\\s+investigator\\s+(research\\s+)?grant\\b"
+      - "\\bstarter\\s+grant\\b"
+
+  programme:
+    label: "Programme Grant"
+    target: true
+    patterns:
+      - "\\bprogramme\\s+grant\\b"
+      - "\\bprogram\\s+grant\\b"
+      - "\\bstrategic\\s+award\\b"
+      - "\\bP01\\b"
+      - "\\bU01\\b"
+      - "\\bfuture\\s+leaders?\\b"
+      - "\\bdiscovery\\s+award\\b"
+
+  seed:
+    label: "Seed / Pilot"
+    target: false
+    patterns:
+      - "\\bseed\\b"
+      - "\\bpilot\\b"
+      - "\\bfeasibility\\b"
+      - "\\bexploration\\b"
+      - "\\bpump[- ]?priming\\b"
+      - "\\bfacilitation\\s+fund\\b"
+
+  studentship:
+    label: "Studentship / PhD"
+    target: false
+    patterns:
+      - "\\bstudentship\\b"
+      - "\\bphd\\b"
+      - "\\bdoctoral\\b"
+      - "\\bscholarship\\b"
+      - "\\bgraduate\\s+student\\b"
+
+  infrastructure:
+    label: "Infrastructure"
+    target: false
+    patterns:
+      - "\\binfrastructure\\b"
+      - "\\bequipment\\b"
+      - "\\bcapacity\\s+building\\b"
+      - "\\bcapital\\s+grant\\b"
+
+  centre:
+    label: "Centre Grant"
+    target: false
+    patterns:
+      - "\\bcentre\\s+grant\\b"
+      - "\\bcenter\\s+grant\\b"
+      - "\\binstitute\\s+grant\\b"
+      - "\\bcollaborative\\s+centre\\b"
+
+  travel:
+    label: "Travel / Mobility"
+    target: false
+    patterns:
+      - "\\btravel\\b"
+      - "\\bmobility\\b"
+      - "\\bexchange\\b"
+      - "\\bvisiting\\s+fellow\\b"
+
+  other:
+    label: "Other"
+    target: false
+    patterns: []

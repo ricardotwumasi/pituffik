@@ -1,0 +1,322 @@
+/* Pituffik dashboard custom styles -- colourful theme */
+
+/* ----------------------------------------------------------------
+   Colour palette reference
+   Primary (Deep Teal)   #0d6e6e  Navbar, headings, primary buttons
+   Secondary (Coral)     #e76f51  New-item highlights, accent badges
+   Tertiary (Violet)     #7c3aed  Grant type and funder badges
+   Success (Emerald)     #059669  High relevance, open status
+   Warning (Amber)       #d97706  Medium relevance, approaching deadline
+   Danger (Rose)         #e11d48  Low relevance, past deadline
+   Info (Sky Blue)       #0284c7  Domain match badges
+   Gold                  #b45309  High-confidence amounts
+   ---------------------------------------------------------------- */
+
+/* General body font */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        'Helvetica Neue', Arial, sans-serif;
+    color: #334155;
+    background-color: #f8fafc;
+}
+
+/* -- Navbar gradient ------------------------------------------------ */
+.navbar,
+.navbar-default,
+.bslib-page-navbar > nav {
+    background: linear-gradient(135deg, #0d6e6e, #0a5858) !important;
+    border-bottom: 2px solid #094d4d;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link,
+.bslib-page-navbar > nav .navbar-brand,
+.bslib-page-navbar > nav .nav-link {
+    color: #ffffff !important;
+}
+
+.navbar .nav-link:hover,
+.bslib-page-navbar > nav .nav-link:hover {
+    color: #b2dfdb !important;
+}
+
+.navbar .nav-link.active,
+.bslib-page-navbar > nav .nav-link.active {
+    color: #ffffff !important;
+    border-bottom: 2px solid #e76f51;
+}
+
+/* -- Opportunity table ---------------------------------------------- */
+.opportunity-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.opportunity-row:hover {
+    background-color: #e0f2f1;
+}
+
+.opportunity-row.new-opportunity {
+    border-left: 3px solid #e76f51;
+}
+
+/* Table header and cell styling */
+.table th {
+    font-weight: 600;
+    color: #0d6e6e;
+    border-bottom: 2px solid #b2dfdb;
+}
+
+.table td {
+    vertical-align: middle;
+    color: #475569;
+}
+
+/* -- Detail panel --------------------------------------------------- */
+.opportunity-detail {
+    border-left: 4px solid #0d6e6e;
+    background-color: #fffbf0;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(13, 110, 110, 0.1);
+}
+
+.opportunity-detail h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #0d6e6e;
+}
+
+.opportunity-detail h3 a {
+    color: #0d6e6e;
+    text-decoration: none;
+}
+
+.opportunity-detail h3 a:hover {
+    text-decoration: underline;
+    color: #0a5858;
+}
+
+/* -- Badges (general) ----------------------------------------------- */
+.badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25em 0.6em;
+    border-radius: 0.75rem;
+}
+
+/* -- "NEW" badge (coral) -------------------------------------------- */
+.badge-new {
+    background-color: #e76f51;
+    color: #ffffff;
+}
+
+/* -- Relevance score badges ----------------------------------------- */
+.badge-relevance-high {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #059669;
+}
+
+.badge-relevance-medium {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #d97706;
+}
+
+.badge-relevance-low {
+    background-color: #ffe4e6;
+    color: #9f1239;
+    border: 1px solid #e11d48;
+}
+
+/* -- Topic tag pills (violet) --------------------------------------- */
+.badge-topic {
+    background-color: #7c3aed;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.2em 0.55em;
+    border-radius: 0.5rem;
+}
+
+/* -- Grant type badges (violet background) -------------------------- */
+.badge-grant-type {
+    background-color: #ede9fe;
+    color: #5b21b6;
+    border: 1px solid #7c3aed;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+/* -- Funder badges (teal outline) ----------------------------------- */
+.badge-funder {
+    background-color: #f0fdfa;
+    color: #0d6e6e;
+    border: 1px solid #0d6e6e;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+/* -- Domain match badges (sky blue) --------------------------------- */
+.badge-domain-match {
+    background-color: #e0f2fe;
+    color: #075985;
+    border: 1px solid #0284c7;
+}
+
+/* -- Deadline urgency badges ---------------------------------------- */
+.badge-deadline-urgent {
+    background-color: #e11d48;
+    color: #ffffff;
+    animation: pulse-badge 1.2s ease-in-out infinite;
+}
+
+.badge-deadline-soon {
+    background-color: #d97706;
+    color: #ffffff;
+}
+
+.badge-deadline-ok {
+    background-color: #059669;
+    color: #ffffff;
+}
+
+.badge-deadline-past {
+    background-color: #9f1239;
+    color: #ffffff;
+    text-decoration: line-through;
+}
+
+/* Pulsing animation for urgent deadlines (<7 days) */
+@keyframes pulse-badge {
+    0% {
+        box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(225, 29, 72, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
+    }
+}
+
+/* -- Amount display (gold accent for high confidence) --------------- */
+.amount-display {
+    font-weight: 600;
+    color: #475569;
+}
+
+.amount-display.high-confidence {
+    color: #b45309;
+    border-left: 3px solid #b45309;
+    padding-left: 0.5em;
+}
+
+.amount-display .amount-usd {
+    font-size: 0.85em;
+    color: #78716c;
+    font-weight: 400;
+}
+
+.amount-display .confidence-indicator {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #b45309;
+}
+
+/* -- Gradient value boxes (diagnostics tab) ------------------------- */
+.value-box {
+    border-radius: 10px;
+    text-align: center;
+    color: #ffffff;
+    padding: 1.2rem 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.value-box-teal {
+    background: linear-gradient(135deg, #0d6e6e, #0a5858);
+}
+
+.value-box-coral {
+    background: linear-gradient(135deg, #e76f51, #d4533b);
+}
+
+.value-box-violet {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+}
+
+.value-box-emerald {
+    background: linear-gradient(135deg, #059669, #047857);
+}
+
+.value-box h4 {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    opacity: 0.9;
+}
+
+.value-box .value-box-number {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+/* -- Score column colour coding ------------------------------------- */
+.score-high {
+    color: #065f46;
+    font-weight: 600;
+}
+
+.score-medium {
+    color: #92400e;
+    font-weight: 600;
+}
+
+.score-low {
+    color: #9f1239;
+}
+
+/* -- Sidebar filters ------------------------------------------------ */
+.sidebar .form-group {
+    margin-bottom: 1rem;
+}
+
+/* Teal outline for primary action buttons */
+.btn-pituffik-primary {
+    background-color: #0d6e6e;
+    border-color: #0d6e6e;
+    color: #ffffff;
+}
+
+.btn-pituffik-primary:hover {
+    background-color: #0a5858;
+    border-color: #094d4d;
+    color: #ffffff;
+}
+
+/* -- Responsive adjustments ----------------------------------------- */
+@media (max-width: 768px) {
+    .opportunity-detail {
+        margin-top: 1rem;
+    }
+}
+
+/* -- Footer --------------------------------------------------------- */
+.app-footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 2rem;
+}
+
+.app-footer a {
+    color: #0d6e6e;
+}
+
+.app-footer a:hover {
+    color: #0a5858;
+    text-decoration: underline;
+}

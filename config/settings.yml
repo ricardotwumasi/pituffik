@@ -1,0 +1,56 @@
+# Pituffik global settings
+
+pipeline:
+  # Maximum Gemini API calls per pipeline run
+  gemini_call_cap: 200
+  # Minimum relevance score to include in email digest
+  relevance_threshold: 0.65
+  # Minimum USD amount for primary display (opportunities below this are deprioritised)
+  min_usd_amount: 100000
+  # Number of days before an opportunity is considered expired
+  expiry_days: 180
+  # User agent string for HTTP requests
+  user_agent: "Pituffik/1.0 (Health Research Grant Discovery; +https://github.com/ricardotwumasi/pituffik)"
+
+deduplication:
+  # Fuzzy match threshold for title+funder (0-100)
+  fuzzy_threshold: 85
+  # URL normalisation: strip these query parameters
+  strip_params:
+    - utm_source
+    - utm_medium
+    - utm_campaign
+    - utm_content
+    - utm_term
+    - ref
+    - fbclid
+    - gclid
+
+gemini:
+  model: "gemini-1.5-flash"
+  # Temperature for classification tasks
+  classification_temperature: 0.1
+  # Temperature for synopsis generation
+  synopsis_temperature: 0.3
+  # Maximum tokens for structured extraction
+  max_output_tokens: 2048
+
+email:
+  sender: "onboarding@resend.dev"
+  subject_prefix: "[Pituffik]"
+  # Maximum opportunities per digest email
+  max_per_digest: 50
+  # Only send digest if there are at least this many new opportunities
+  min_for_digest: 1
+  # Minimum interval between digests (days) -- weekly
+  digest_interval_days: 7
+
+database:
+  path: "data/grants.sqlite"
+  wal_mode: true
+
+fx:
+  # ECB daily exchange rate XML feed
+  ecb_url: "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+  # Fallback USD/EUR rate if ECB feed is unavailable
+  fallback_usd_eur: 1.08

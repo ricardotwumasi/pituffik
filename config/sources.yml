@@ -1,0 +1,168 @@
+# Pituffik source adapter registry
+# Each source has an adapter module, enable flag, and rate limit.
+
+sources:
+  # -- Tier 1: APIs / RSS (enabled) --
+  nih_rss:
+    adapter: pipeline.adapters.nih_rss
+    enabled: true
+    type: rss
+    rate_limit_seconds: 2.0
+    description: "NIH Grants RSS feed (US federal health research)"
+    base_url: "https://grants.nih.gov"
+
+  grants_gov:
+    adapter: pipeline.adapters.grants_gov
+    enabled: true
+    type: api
+    rate_limit_seconds: 2.0
+    description: "Grants.gov REST API (US federal grants)"
+    base_url: "https://www.grants.gov"
+
+  eu_funding:
+    adapter: pipeline.adapters.eu_funding
+    enabled: true
+    type: rss
+    rate_limit_seconds: 3.0
+    description: "EU Funding & Tenders Portal"
+    base_url: "https://ec.europa.eu/info/funding-tenders"
+
+  ukri:
+    adapter: pipeline.adapters.ukri
+    enabled: true
+    type: html
+    rate_limit_seconds: 3.0
+    description: "UKRI Funding Finder (all UK councils)"
+    base_url: "https://www.ukri.org"
+
+  nsf_rss:
+    adapter: pipeline.adapters.nsf_rss
+    enabled: true
+    type: rss
+    rate_limit_seconds: 2.0
+    description: "NSF Funding RSS (US)"
+    base_url: "https://www.nsf.gov"
+
+  # -- Tier 2: HTML scraping (enabled) --
+  nihr:
+    adapter: pipeline.adapters.nihr
+    enabled: true
+    type: html
+    rate_limit_seconds: 3.0
+    description: "NIHR (UK health research)"
+    base_url: "https://www.nihr.ac.uk"
+
+  wellcome:
+    adapter: pipeline.adapters.wellcome
+    enabled: true
+    type: html
+    rate_limit_seconds: 3.0
+    description: "Wellcome Trust"
+    base_url: "https://wellcome.org"
+
+  cruk:
+    adapter: pipeline.adapters.cruk
+    enabled: true
+    type: html
+    rate_limit_seconds: 3.0
+    description: "Cancer Research UK"
+    base_url: "https://www.cancerresearchuk.org"
+
+  bhf:
+    adapter: pipeline.adapters.bhf
+    enabled: true
+    type: html
+    rate_limit_seconds: 3.0
+    description: "British Heart Foundation"
+    base_url: "https://www.bhf.org.uk"
+
+  aruk:
+    adapter: pipeline.adapters.aruk
+    enabled: true
+    type: html
+    rate_limit_seconds: 3.0
+    description: "Alzheimer's Research UK"
+    base_url: "https://www.alzheimersresearchuk.org"
+
+  novo_nordisk:
+    adapter: pipeline.adapters.novo_nordisk
+    enabled: true
+    type: html
+    rate_limit_seconds: 3.0
+    description: "Novo Nordisk Foundation (Denmark)"
+    base_url: "https://novonordiskfonden.dk"
+
+  swedish_research_council:
+    adapter: pipeline.adapters.swedish_research_council
+    enabled: true
+    type: rss
+    rate_limit_seconds: 3.0
+    description: "Vetenskapsradet (Sweden)"
+    base_url: "https://www.vr.se"
+
+  norwegian_research_council:
+    adapter: pipeline.adapters.norwegian_research_council
+    enabled: true
+    type: rss
+    rate_limit_seconds: 3.0
+    description: "Forskningsradet (Norway)"
+    base_url: "https://www.forskningsradet.no"
+
+  finnish_research:
+    adapter: pipeline.adapters.finnish_research
+    enabled: false  # Requires investigation of scraping terms
+    type: html
+    rate_limit_seconds: 3.0
+    description: "Research Council of Finland / Research.fi"
+    base_url: "https://www.aka.fi"
+
+  danish_councils:
+    adapter: pipeline.adapters.danish_councils
+    enabled: false  # No unified RSS; needs dedicated HTML adapter
+    type: html
+    rate_limit_seconds: 3.0
+    description: "Independent Research Fund DK + Innovation Fund DK"
+    base_url: "https://dff.dk"
+
+  # -- Tier 2: Disabled initially --
+  nhmrc:
+    adapter: pipeline.adapters.nhmrc
+    enabled: false  # May need JS rendering
+    type: html
+    rate_limit_seconds: 3.0
+    description: "NHMRC (Australia)"
+    base_url: "https://www.nhmrc.gov.au"
+
+  # -- Tier 3: Disabled initially --
+  who_tdr:
+    adapter: pipeline.adapters.who_tdr
+    enabled: false
+    type: html
+    rate_limit_seconds: 3.0
+    description: "WHO TDR Grants"
+    base_url: "https://tdr.who.int"
+
+  gates_foundation:
+    adapter: pipeline.adapters.gates_foundation
+    enabled: false
+    type: html
+    rate_limit_seconds: 3.0
+    description: "Gates Foundation"
+    base_url: "https://www.gatesfoundation.org"
+
+  mrc_ukri:
+    adapter: pipeline.adapters.mrc_ukri
+    enabled: false  # Overlaps with UKRI
+    type: html
+    rate_limit_seconds: 3.0
+    description: "MRC (overlaps with UKRI)"
+    base_url: "https://www.ukri.org"
+
+  # -- Seed pages (user-editable, always enabled) --
+  seed_pages:
+    adapter: pipeline.adapters.seed_pages
+    enabled: true
+    type: html
+    rate_limit_seconds: 2.0
+    description: "User-provided funding page URLs from config/seed_urls.yml"
+    base_url: null

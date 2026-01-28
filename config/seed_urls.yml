@@ -1,0 +1,114 @@
+# Pituffik seed URLs configuration
+# Add funding page URLs here for the seed_pages adapter to fetch.
+# Each entry is fetched, and title / deadline / amount are extracted automatically.
+#
+# Fields:
+#   url:           (required) Full URL of the funding page
+#   funder:        (required) Name of the funding body
+#   deadline_type: (optional) "rolling" for always-open calls, omit for fixed deadlines
+
+pages:
+  # -- UKRI (specific calls) --
+  - url: "https://www.ukri.org/opportunity/bbsrc-2025-transformative-research-technologies-25trt/"
+    funder: "UKRI / BBSRC"
+  - url: "https://www.ukri.org/opportunity/future-leaders-fellowship-round-11/"
+    funder: "UKRI"
+  - url: "https://www.ukri.org/opportunity/metascience-research-grants-round-2/"
+    funder: "UKRI"
+  - url: "https://www.ukri.org/opportunity/adr-uk-research-fellowships-2025/"
+    funder: "UKRI / ADR UK"
+
+  # -- UKRI (always-open calls) --
+  - url: "https://www.ukri.org/opportunity/mrc-research-grant-applicant-led/"
+    funder: "UKRI / MRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/mrc-new-investigator-research-grant-applicant-led/"
+    funder: "UKRI / MRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/mrc-partnership-grant-applicant-led/"
+    funder: "UKRI / MRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/esrc-responsive-mode-research-grants-round-two/"
+    funder: "UKRI / ESRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/esrc-responsive-mode-new-investigator-grants-round-two/"
+    funder: "UKRI / ESRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/esrc-responsive-mode-secondary-data-analysis-round-two/"
+    funder: "UKRI / ESRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/epsrc-standard-research-grant-nov-2023-responsive-mode/"
+    funder: "UKRI / EPSRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/epsrc-new-investigator-award-nov-2023-responsive-mode/"
+    funder: "UKRI / EPSRC"
+    deadline_type: rolling
+  - url: "https://www.ukri.org/opportunity/epsrc-programme-grant-outline-stage/"
+    funder: "UKRI / EPSRC"
+    deadline_type: rolling
+
+  # -- Wellcome Trust --
+  - url: "https://wellcome.org/grant-funding/schemes/early-career-awards"
+    funder: "Wellcome Trust"
+  - url: "https://wellcome.org/research-funding/schemes/wellcome-career-development-awards"
+    funder: "Wellcome Trust"
+  - url: "https://wellcome.org/research-funding/schemes/wellcome-discovery-awards"
+    funder: "Wellcome Trust"
+  - url: "https://wellcome.org/research-funding/schemes/genomics-in-context-awards"
+    funder: "Wellcome Trust"
+
+  # -- NIHR --
+  - url: "https://www.nihr.ac.uk/funding/research-patient-benefit-november-2025/2025425-2025426-2025427"
+    funder: "NIHR"
+  - url: "https://www.nihr.ac.uk/funding/eme-programme-researcher-led/2025458"
+    funder: "NIHR"
+  - url: "https://www.nihr.ac.uk/research-funding/funding-programmes/public-health-research"
+    funder: "NIHR"
+  - url: "https://www.nihr.ac.uk/funding/development-and-skills-enhancement-dse-award-cohort-9/2025464"
+    funder: "NIHR"
+
+  # -- Royal Society --
+  - url: "https://royalsociety.org/grants/research-professorship/"
+    funder: "Royal Society"
+  - url: "https://royalsociety.org/grants/faraday-discovery-fellowships/accelerated-international-route/"
+    funder: "Royal Society"
+
+  # -- Other UK charities and funders --
+  - url: "https://acmedsci.ac.uk/grants-and-schemes/grant-schemes/starter-grants"
+    funder: "Academy of Medical Sciences"
+  - url: "https://www.leverhulme.ac.uk/news/RPG2026"
+    funder: "Leverhulme Trust"
+  - url: "https://www.nuffieldfoundation.org/funding-for-research/main-grants"
+    funder: "Nuffield Foundation"
+  - url: "https://www.alzheimers.org.uk/what-we-do/researchers/our-funding-schemes/project-grants"
+    funder: "Alzheimer's Society"
+  - url: "https://www.alzheimersresearchuk.org/grants/research-fellowship/"
+    funder: "Alzheimer's Research UK"
+  - url: "https://www.alzheimersresearchuk.org/grants/senior-research-fellowship/"
+    funder: "Alzheimer's Research UK"
+  - url: "https://www.alzheimersresearchuk.org/grants/phd-scholarship/"
+    funder: "Alzheimer's Research UK"
+  - url: "https://www.arthritis-uk.org/research-professionals/research-opportunities-and-funding/open-and-future-funding-calls/research-facilitation-fund-2026/"
+    funder: "Versus Arthritis"
+  - url: "https://action.org.uk/research/apply-research-grant/apply-project-grant"
+    funder: "ACTION Medical Research"
+
+  # -- International --
+  - url: "https://www.embo.org/funding-awards/fellowships/postdoctoral-fellowships"
+    funder: "EMBO"
+  - url: "https://cifarportal.smapply.io/prog/jacobs_cifar_research_fellowship_program_/"
+    funder: "CIFAR"
+
+  # -- KCL and institutional --
+  - url: "https://www.kingshealthpartners.org/our-work/personalised-health/centre-translational-medicine/patient-and-public-involvementengagement-pre-grant-support-fund"
+    funder: "King's Health Partners"
+  - url: "https://www.kcl.ac.uk/research/funding/esrc-impact-acceleration-account"
+    funder: "KCL / ESRC IAA"
+  - url: "https://www.kcl.ac.uk/impact/fund"
+    funder: "KCL"
+  - url: "https://internal.kcl.ac.uk/about/International/Funding-Opportunities/partnership-fund/partnership-fund"
+    funder: "KCL"
+  - url: "https://www.kcl.ac.uk/research/kings-innovation-enterprise/impact-acceleration"
+    funder: "KCL"
+  - url: "https://www.maudsleybrc.nihr.ac.uk/academic-career-development/current-opportunities/"
+    funder: "Maudsley BRC"

@@ -1,0 +1,85 @@
+# Pituffik keyword configuration
+# Used by source adapters to build search queries.
+# British English primary, with US/Australian alternatives for broad coverage.
+
+thematic:
+  primary:
+    - health research
+    - mental health
+    - psychology
+    - psychiatry
+    - psychosis
+    - schizophrenia
+    - severe mental illness
+    - clinical psychology
+    - health psychology
+    - occupational psychology
+    - organisational psychology
+    - organizational psychology        # US spelling
+    - behaviour change                 # UK
+    - behavior change                  # US
+    - epidemiology
+    - public health
+    - behavioural science
+    - behavioral science               # US spelling
+    - digital health
+    - implementation science
+    - health services research
+
+  secondary:
+    - first-episode psychosis
+    - early intervention
+    - antipsychotic
+    - functional outcomes
+    - vocational rehabilitation
+    - supported employment
+    - IPS employment
+    - occupational health
+    - work stress
+    - burnout
+    - wellbeing
+    - causal inference
+    - registry data
+    - administrative data
+    - longitudinal cohort
+    - meta-analysis
+    - evidence synthesis
+    - AI mental health
+    - digital phenotyping
+
+  scandinavian:
+    - psykologi                        # Danish/Swedish/Norwegian
+    - psykiatri
+    - sundhedsforskning                # Danish health research
+    - helseforskning                   # Norwegian health research
+    - folkhalsa                        # Swedish public health
+    - psykose                          # Danish/Norwegian psychosis
+    - schizofreni                      # Danish/Swedish/Norwegian
+
+domain:
+  terms:
+    - grant
+    - funding
+    - award
+    - fellowship
+    - call
+    - opportunity
+    - scheme
+    - programme
+    - program                          # US spelling
+
+grant_specific:
+  indicators:
+    - research grant
+    - project grant
+    - programme grant
+    - fellowship
+    - investigator award
+    - seed funding
+    - pilot grant
+    - career development award
+    - studentship
+    - PhD funding
+    - infrastructure grant
+    - equipment grant
+    - travel grant
