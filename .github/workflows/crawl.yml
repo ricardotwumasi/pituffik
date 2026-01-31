@@ -2,8 +2,8 @@ name: Pituffik Pipeline
 
 on:
   schedule:
-    # Run every 6 hours for regular crawling
-    - cron: '0 */6 * * *'
+    # Every other day (Mon/Wed/Fri) at 06:00 UTC
+    - cron: '0 6 * * 1,3,5'
     # Monday 07:00 UTC for forced digest (07:00 UK winter / 08:00 UK summer)
     - cron: '0 7 * * 1'
   workflow_dispatch:  # Allow manual trigger
