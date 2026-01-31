@@ -2,8 +2,10 @@ name: Pituffik Pipeline
 
 on:
   schedule:
-    # Run every 6 hours
+    # Run every 6 hours for regular crawling
     - cron: '0 */6 * * *'
+    # Monday 07:00 UTC for forced digest (07:00 UK winter / 08:00 UK summer)
+    - cron: '0 7 * * 1'
   workflow_dispatch:  # Allow manual trigger
 
 permissions:
@@ -29,9 +31,10 @@ jobs:
 
       - name: Run pipeline
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          FORCE_DIGEST: ${{ github.event.schedule == '0 7 * * 1' && 'true' || 'false' }}
         run: python -m pipeline.main
 
       - name: Checkpoint SQLite WAL

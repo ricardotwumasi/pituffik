@@ -1,6 +1,6 @@
-"""Gemini enrichment engine for Pituffik.
+"""LLM enrichment engine for Pituffik.
 
-Handles all Gemini API interactions for grant opportunities:
+Handles all LLM API interactions via OpenRouter for grant opportunities:
 - Relevance classification against target health research profile
 - Structured field extraction (amounts, deadlines, eligibility, etc.)
 - English synopsis for non-English grant adverts
@@ -16,11 +16,11 @@ import hashlib
 import json
 import logging
 import os
+import re
 import sqlite3
 from typing import Optional
 
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 from pipeline import db
 from pipeline.models import (
@@ -36,25 +36,30 @@ from pipeline.prompts import extraction, grant_type_fallback, relevance, synopsi
 
 logger = logging.getLogger(__name__)
 
-# Gemini model ID
-_MODEL_ID = "gemini-2.5-flash-lite"
+# OpenRouter model configuration
+_PRIMARY_MODEL = "tngtech/deepseek-r1t2-chimera:free"
+_FALLBACK_MODEL = "google/gemma-3-27b-it:free"
+_MODEL_ID = _PRIMARY_MODEL  # For cache/audit records
 
 
-def _get_client() -> genai.Client:
-    """Create a Gemini API client.
+def _get_client() -> OpenAI:
+    """Create an OpenRouter API client (OpenAI-compatible).
 
-    Reads the API key from the GEMINI_API_KEY environment variable.
+    Reads the API key from the OPENROUTER_API_KEY environment variable.
 
     Returns:
-        A configured Gemini client instance.
+        A configured OpenAI client instance pointing to OpenRouter.
 
     Raises:
-        RuntimeError: If GEMINI_API_KEY is not set.
+        RuntimeError: If OPENROUTER_API_KEY is not set.
     """
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
-        raise RuntimeError("GEMINI_API_KEY environment variable not set")
-    return genai.Client(api_key=api_key)
+        raise RuntimeError("OPENROUTER_API_KEY environment variable not set")
+    return OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key,
+    )
 
 
 def _compute_input_hash(prompt_version: str, text: str) -> str:
@@ -71,60 +76,87 @@ def _compute_input_hash(prompt_version: str, text: str) -> str:
     return hashlib.sha256(combined.encode("utf-8")).hexdigest()
 
 
-def _call_gemini(
-    client: genai.Client,
+def _extract_json_from_response(text: str) -> str:
+    """Extract JSON from response text, handling markdown code blocks.
+
+    Some models wrap JSON in markdown code fences like ```json ... ```.
+    This function extracts the raw JSON.
+    """
+    # Try to find JSON in markdown code block
+    code_block_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
+    if code_block_match:
+        return code_block_match.group(1).strip()
+    # Return as-is if no code block found
+    return text.strip()
+
+
+def _call_llm(
+    client: OpenAI,
     prompt: str,
     temperature: float = 0.1,
-    response_schema: Optional[type] = None,
 ) -> str:
-    """Call Gemini and return the response text.
+    """Call LLM via OpenRouter and return the response text.
+
+    Tries the primary model first, falls back to secondary on failure.
 
     Args:
-        client: The Gemini API client.
+        client: The OpenAI-compatible API client.
         prompt: The full prompt text.
         temperature: Sampling temperature.
-        response_schema: Optional Pydantic model for structured output.
 
     Returns:
-        The raw response text from Gemini.
-    """
-    config = types.GenerateContentConfig(
-        temperature=temperature,
-        max_output_tokens=2048,
-        response_mime_type="application/json",
-    )
+        The raw response text from the LLM.
 
-    response = client.models.generate_content(
-        model=_MODEL_ID,
-        contents=prompt,
-        config=config,
-    )
-    return response.text
+    Raises:
+        RuntimeError: If all models fail.
+    """
+    last_error = None
+
+    for model in [_PRIMARY_MODEL, _FALLBACK_MODEL]:
+        try:
+            logger.debug("Trying model: %s", model)
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=temperature,
+                max_tokens=2048,
+            )
+            content = response.choices[0].message.content
+            if content:
+                return _extract_json_from_response(content)
+            raise ValueError("Empty response from model")
+        except Exception as e:
+            logger.warning("Model %s failed: %s", model, e)
+            last_error = e
+            if model == _FALLBACK_MODEL:
+                break
+
+    raise RuntimeError(f"All models failed. Last error: {last_error}")
 
 
 def _get_or_call(
     conn: sqlite3.Connection,
-    client: genai.Client,
+    client: OpenAI,
     opp_id: str,
     task_type: str,
     prompt_version: str,
     prompt_text: str,
     temperature: float = 0.1,
 ) -> str:
-    """Check cache, call Gemini if miss, store result.
+    """Check cache, call LLM if miss, store result.
 
     Looks up the enrichment cache by input hash and task type. If a cached
-    result exists, returns it immediately. Otherwise, calls Gemini, stores
+    result exists, returns it immediately. Otherwise, calls the LLM, stores
     the result, and returns the output JSON string.
 
     Args:
         conn: Database connection.
-        client: Gemini API client.
+        client: OpenRouter API client.
         opp_id: The opportunity ID for cache association.
         task_type: The enrichment task type string.
         prompt_version: The prompt version for cache keying.
-        prompt_text: The full prompt text to send to Gemini.
-        temperature: Sampling temperature for the Gemini call.
+        prompt_text: The full prompt text to send to the LLM.
+        temperature: Sampling temperature for the LLM call.
 
     Returns:
         The JSON output string (from cache or fresh call).
@@ -137,9 +169,9 @@ def _get_or_call(
         logger.debug("Cache hit for %s/%s", opp_id, task_type)
         return cached.output_json
 
-    # Call Gemini
-    logger.info("Calling Gemini for %s/%s", opp_id, task_type)
-    output_text = _call_gemini(client, prompt_text, temperature=temperature)
+    # Call LLM via OpenRouter
+    logger.info("Calling LLM for %s/%s", opp_id, task_type)
+    output_text = _call_llm(client, prompt_text, temperature=temperature)
 
     # Store in cache
     enrichment = Enrichment(
@@ -157,7 +189,7 @@ def _get_or_call(
 
 def enrich_relevance(
     conn: sqlite3.Connection,
-    client: genai.Client,
+    client: OpenAI,
     opp: Opportunity,
     grant_text: str,
 ) -> Optional[RelevanceResult]:
@@ -165,7 +197,7 @@ def enrich_relevance(
 
     Args:
         conn: Database connection.
-        client: Gemini API client.
+        client: OpenRouter API client.
         opp: The opportunity to classify.
         grant_text: The grant text to analyse.
 
@@ -192,7 +224,7 @@ def enrich_relevance(
 
 def enrich_extraction(
     conn: sqlite3.Connection,
-    client: genai.Client,
+    client: OpenAI,
     opp: Opportunity,
     grant_text: str,
 ) -> Optional[ExtractionResult]:
@@ -200,7 +232,7 @@ def enrich_extraction(
 
     Args:
         conn: Database connection.
-        client: Gemini API client.
+        client: OpenRouter API client.
         opp: The opportunity to extract from.
         grant_text: The grant text to parse.
 
@@ -227,7 +259,7 @@ def enrich_extraction(
 
 def enrich_synopsis(
     conn: sqlite3.Connection,
-    client: genai.Client,
+    client: OpenAI,
     opp: Opportunity,
     grant_text: str,
 ) -> Optional[SynopsisResult]:
@@ -235,7 +267,7 @@ def enrich_synopsis(
 
     Args:
         conn: Database connection.
-        client: Gemini API client.
+        client: OpenRouter API client.
         opp: The opportunity to summarise.
         grant_text: The non-English grant text.
 
@@ -262,7 +294,7 @@ def enrich_synopsis(
 
 def enrich_grant_type_fallback(
     conn: sqlite3.Connection,
-    client: genai.Client,
+    client: OpenAI,
     opp: Opportunity,
 ) -> Optional[GrantTypeFallbackResult]:
     """Classify a grant's type when regex mapping returns 'other'.
@@ -271,7 +303,7 @@ def enrich_grant_type_fallback(
 
     Args:
         conn: Database connection.
-        client: Gemini API client.
+        client: OpenRouter API client.
         opp: The opportunity with an ambiguous grant type.
 
     Returns:
@@ -301,7 +333,7 @@ def enrich_grant_type_fallback(
 
 def enrich_opportunity(
     conn: sqlite3.Connection,
-    client: genai.Client,
+    client: OpenAI,
     opp: Opportunity,
     grant_text: str,
 ) -> dict:
@@ -315,7 +347,7 @@ def enrich_opportunity(
 
     Args:
         conn: Database connection.
-        client: Gemini API client.
+        client: OpenRouter API client.
         opp: The opportunity to enrich.
         grant_text: The grant text content.
 
@@ -380,7 +412,7 @@ def enrich_opportunity(
             fallback = enrich_grant_type_fallback(conn, client, opp)
             if fallback:
                 updates["grant_type_bucket"] = fallback.grant_type_bucket
-                updates["grant_type_source"] = "gemini"
+                updates["grant_type_source"] = "llm"
                 tasks_run += 1
         else:
             updates["grant_type_bucket"] = grant_type_bucket

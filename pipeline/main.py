@@ -14,7 +14,7 @@ from pathlib import Path
 
 from pipeline import db
 from pipeline.collector import collect_all
-from pipeline.enricher import enrich_opportunity, _get_client as get_gemini_client
+from pipeline.enricher import enrich_opportunity, _get_client as get_llm_client
 from pipeline.fx import update_fx_rates, convert_opportunity_amounts
 from pipeline.http_client import create_client
 from pipeline.models import Opportunity, OpportunitySnapshot
@@ -165,20 +165,20 @@ def run_pipeline(dry_run: bool = False) -> dict:
                 logger.error(msg)
                 errors.append(msg)
 
-        # -- Step 5: Enrich via Gemini --
-        logger.info("=== Step 5: Enriching via Gemini ===")
-        gemini_calls = 0
+        # -- Step 5: Enrich via LLM (OpenRouter) --
+        logger.info("=== Step 5: Enriching via LLM ===")
+        llm_calls = 0
 
-        # Check if Gemini API key is available
-        if os.environ.get("GEMINI_API_KEY"):
-            gemini_client = get_gemini_client()
+        # Check if OpenRouter API key is available
+        if os.environ.get("OPENROUTER_API_KEY"):
+            llm_client = get_llm_client()
             opps_to_enrich = db.get_opportunities_needing_enrichment(
                 conn, "relevance", limit=gemini_call_cap
             )
 
             for opp in opps_to_enrich:
-                if gemini_calls >= gemini_call_cap:
-                    logger.warning("Gemini call cap reached (%d)", gemini_call_cap)
+                if llm_calls >= gemini_call_cap:
+                    logger.warning("LLM call cap reached (%d)", gemini_call_cap)
                     break
 
                 # Get grant text from latest snapshot
@@ -194,17 +194,17 @@ def run_pipeline(dry_run: bool = False) -> dict:
                     continue
 
                 try:
-                    updates = enrich_opportunity(conn, gemini_client, opp, grant_text)
+                    updates = enrich_opportunity(conn, llm_client, opp, grant_text)
                     if updates:
                         db.update_opportunity_fields(conn, opp.opportunity_id, **updates)
-                        gemini_calls += 1
+                        llm_calls += 1
                         stats["enrichments_made"] += 1
                 except Exception as exc:
                     msg = f"Enrichment failed for {opp.opportunity_id}: {exc}"
                     logger.error(msg)
                     errors.append(msg)
         else:
-            logger.warning("GEMINI_API_KEY not set -- skipping enrichment")
+            logger.warning("OPENROUTER_API_KEY not set -- skipping enrichment")
 
         # -- Step 6: Update FX rates and convert amounts --
         logger.info("=== Step 6: Updating FX rates ===")
@@ -238,12 +238,17 @@ def run_pipeline(dry_run: bool = False) -> dict:
 
         # -- Step 7: Notify --
         logger.info("=== Step 7: Sending notifications ===")
+        force_digest = os.environ.get("FORCE_DIGEST", "").lower() == "true"
+        if force_digest:
+            logger.info("FORCE_DIGEST=true -- will send digest regardless of interval")
+
         if os.environ.get("RESEND_API_KEY"):
             try:
                 emails_sent = send_digest(
                     conn,
                     min_relevance=relevance_threshold,
                     dry_run=dry_run,
+                    force=force_digest,
                 )
                 stats["emails_sent"] = emails_sent
             except Exception as exc:
