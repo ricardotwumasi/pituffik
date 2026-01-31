@@ -1,8 +1,8 @@
 # Pituffik global settings
 
 pipeline:
-  # Maximum Gemini API calls per pipeline run
-  gemini_call_cap: 200
+  # Maximum LLM API calls per pipeline run (reduced for free-tier models)
+  gemini_call_cap: 30
   # Minimum relevance score to include in email digest
   relevance_threshold: 0.65
   # Minimum GBP amount for primary display (opportunities below this are deprioritised)
