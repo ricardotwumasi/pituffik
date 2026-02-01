@@ -168,6 +168,8 @@ def verify_opportunity(
 
     html = response.text
     text = _extract_text(html)
+    # Sanitize HTML to remove script/style tags that may contain third-party API keys
+    sanitized_html = _sanitize_html(html)
 
     # Store a content snapshot if the content has changed
     content_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -179,7 +181,7 @@ def verify_opportunity(
             http_status=response.status_code,
             content_type=response.headers.get("content-type", ""),
             content_text=text,
-            content_html=html,
+            content_html=sanitized_html,
             content_hash=content_hash,
             extractor_version=_EXTRACTOR_VERSION,
             notes=None,
@@ -277,6 +279,27 @@ def verify_batch(
 
 
 # -- Internal helpers --
+
+def _sanitize_html(html: str) -> str:
+    """Remove script and style tags from HTML to prevent storing third-party secrets.
+
+    Third-party websites often embed API keys (e.g. Google Maps) in script tags.
+    Storing raw HTML with these keys in a public repository triggers secret
+    scanning alerts. This function strips script/style tags while preserving
+    the document structure for display purposes.
+
+    Args:
+        html: The raw HTML string.
+
+    Returns:
+        HTML with script and style tags removed.
+    """
+    soup = BeautifulSoup(html, "lxml")
+    # Remove script and style elements (may contain third-party API keys)
+    for element in soup(["script", "style", "noscript"]):
+        element.decompose()
+    return str(soup)
+
 
 def _extract_text(html: str) -> str:
     """Extract readable text from HTML, removing boilerplate elements.
