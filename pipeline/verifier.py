@@ -294,6 +294,8 @@ def _sanitize_html(html: str) -> str:
     Returns:
         HTML with script and style tags removed.
     """
+    if not html:
+        return ""
     soup = BeautifulSoup(html, "lxml")
     # Remove script and style elements (may contain third-party API keys)
     for element in soup(["script", "style", "noscript"]):

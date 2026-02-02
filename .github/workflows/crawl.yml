@@ -35,7 +35,9 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
           FORCE_DIGEST: ${{ github.event.schedule == '0 7 * * 1' && 'true' || 'false' }}
-        run: python -m pipeline.main
+        run: |
+          set -e
+          python -m pipeline.main 2>&1 || { echo "::error::Pipeline failed"; exit 1; }
 
       - name: Checkpoint SQLite WAL
         run: python -c "import sqlite3; c=sqlite3.connect('data/grants.sqlite'); c.execute('PRAGMA wal_checkpoint(TRUNCATE)'); c.close()"
